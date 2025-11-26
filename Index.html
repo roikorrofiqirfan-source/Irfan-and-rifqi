@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kalkulator MI</title>
+  <style>
+    :root {
+      --bg: #00008b;
+      --panel: #ffffff;
+      --accent: #006400;
+      --dark: #000000;
+      --muted: #6b7280;
+      --btn: #f3f4f6;
+      --danger: #ffa500;
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+
+    * { box-sizing: border-box }
+    html, body { height: 100% }
+    body {
+      margin: 0;
+      background: linear-gradient(180deg, #000000 0%, var(--bg) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      color: var(--dark);
+    }
+
+    .app {
+      width: 100%;
+      max-width: 420px;
+      background: var(--panel);
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(15,23,42,0.12);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      padding: 16px 20px;
+      background: linear-gradient(90deg, rgba(59,130,246,0.12), transparent);
+      border-bottom: 1px solid rgba(0,0,0,0.04);
+    }
+
+    header h1 { margin: 0; font-size: 18px; letter-spacing: 0.2px }
+
+    main { padding: 18px }
+
+    .display {
+      background: transparent;
+      margin-bottom: 12px;
+    }
+
+    .history {
+      color: var(--muted);
+      font-size: 12px;
+      text-align: right;
+      min-height: 16px;
+      padding-right: 6px;
+    }
+
+    .output {
+      width: 100%;
+      border: none;
+      outline: none;
+      text-align: right;
+      font-size: 36px;
+      background: transparent;
+      padding: 6px 6px 4px 6px;
+      color: var(--dark);
+      font-weight: 600;
+    }
+
+    .keys {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+
+    .btn {
+      background: var(--btn);
+      border: none;
+      padding: 16px;
+      border-radius: 10px;
+      font-size: 18px;
+      font-weight: 600;
+      box-shadow: 0 2px 0 rgba(0,0,0,0.03) inset;
+      user-select: none;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn:hover { background: #eef2ff }
+    .btn:active { transform: translateY(1px) }
+    .btn.op { background: #eef2ffl; color: var(--accent) }
+    .btn.equals { background: var(--accent); color: white }
+    .btn.span-2 { grid-column: span 2; background: #ffff00; color: var(--danger) }
+
+    footer {
+      padding: 12px 16px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    @media (max-width:420px) {
+      .output { font-size: 28px }
+      .btn { padding: 14px; font-size: 16px }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app">
+    <header>
+      <h1>Kalkulator</h1>
+    </header>
+
+    <main>
+      <div class="display">
+        <div class="history" id="history"></div>
+        <input type="text" id="display" class="output" readonly />
+      </div>
+
+      <div class="keys">
+        <button class="btn span-2" onclick="clearDisplay()">AC</button>
+        <button class="btn op" onclick="deleteLast()">DEL</button>
+        <button class="btn op" onclick="appendOperator('/')">÷</button>
+
+        <button class="btn" onclick="appendNumber('7')">7</button>
+        <button class="btn" onclick="appendNumber('8')">8</button>
+        <button class="btn" onclick="appendNumber('9')">9</button>
+        <button class="btn op" onclick="appendOperator('*')">×</button>
+
+        <button class="btn" onclick="appendNumber('4')">4</button>
+        <button class="btn" onclick="appendNumber('5')">5</button>
+        <button class="btn" onclick="appendNumber('6')">6</button>
+        <button class="btn op" onclick="appendOperator('-')">−</button>
+
+        <button class="btn" onclick="appendNumber('1')">1</button>
+        <button class="btn" onclick="appendNumber('2')">2</button>
+        <button class="btn" onclick="appendNumber('3')">3</button>
+        <button class="btn op" onclick="appendOperator('+')">+</button>
+
+        <button class="btn" onclick="appendNumber('0')">0</button>
+        <button class="btn" onclick="appendDot()">.</button>
+        <button class="btn equals" onclick="calculate()">=</button>
+      </div>
+    </main>
+
+    <footer>© Rifqi Irfan</footer>
+  </div>
+
+  <script>
+    const display = document.getElementById('display');
+    const history = document.getElementById('history');
+
+    function appendNumber(num) {
+      display.value += num;
+    }
+
+    function appendOperator(op) {
+      if (display.value === '') return;
+      const lastChar = display.value.slice(-1);
+      if ('+-*/'.includes(lastChar)) return;
+      display.value += op;
+    }
+
+    function appendDot() {
+      const parts = display.value.split(/[\+\-\*\/]/);
+      const lastPart = parts[parts.length - 1];
+      if (!lastPart.includes('.')) display.value += '.';
+    }
+
+    function clearDisplay() {
+      display.value = '';
+      history.innerText = '';
+    }
+
+    function deleteLast() {
+      display.value = display.value.slice(0, -1);
+    }
+
+    function calculate() {
+      try {
+        const result = eval(display.value);
+        history.innerText = display.value + ' =';
+        display.value = result;
+      } catch (e) {
+        display.value = 'Error';
+      }
+    }
+  </script>
+</body>
+</html>
